@@ -98,6 +98,24 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-background text-foreground" suppressHydrationWarning>
         <SessionProvider>
           <LanguageProvider>
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify({
+                  "@context": "https://schema.org",
+                  "@type": "SoftwareApplication",
+                  "name": "InkWell",
+                  "operatingSystem": "Web",
+                  "applicationCategory": "BusinessApplication",
+                  "description": "Kinetic Minimalism Attendance System with Selfie and Geolocation verification.",
+                  "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "USD"
+                  }
+                })
+              }}
+            />
             {children}
             <Toaster position="top-center" richColors closeButton />
           </LanguageProvider>
