@@ -1,7 +1,7 @@
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowDownLeft, ArrowUpRight, Clock } from "lucide-react"
+import { ArrowDownLeft, ArrowUpRight, Clock, User } from "lucide-react"
 
 interface HistoryProps {
   attendances: any[]
@@ -24,7 +24,7 @@ export function AttendanceHistory({ attendances }: HistoryProps) {
                 <Clock className="h-6 w-6 text-muted-foreground/50" />
               </div>
               <p className="text-sm font-medium text-muted-foreground">
-                Belum ada data absensi 7 hari terakhir
+                Belum ada data absensi
               </p>
             </div>
           ) : (
@@ -33,20 +33,31 @@ export function AttendanceHistory({ attendances }: HistoryProps) {
                 key={item.id}
                 className="flex items-center justify-between p-4 rounded-2xl bg-secondary/30 border border-transparent hover:border-primary/20 hover:bg-secondary/50 transition-all"
               >
-                <div className="flex flex-col">
-                  <span className="text-sm font-bold text-foreground capitalize">
-                    {format(new Date(item.date), "EEEE", { locale: id })}
-                  </span>
-                  <span className="text-xs font-medium text-muted-foreground">
-                    {format(new Date(item.date), "d MMM yyyy", { locale: id })}
-                  </span>
+                <div className="flex items-center gap-4">
+                  <div className="relative h-12 w-12 rounded-xl overflow-hidden bg-secondary border-2 border-background shadow-sm">
+                    {item.image ? (
+                      <img src={item.image} className="h-full w-full object-cover scale-x-[-1]" alt="Selfie" />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center text-muted-foreground">
+                        <User className="h-6 w-6" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-foreground capitalize">
+                      {format(new Date(item.date), "EEEE", { locale: id })}
+                    </span>
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {format(new Date(item.date), "d MMM yyyy", { locale: id })}
+                    </span>
+                  </div>
                 </div>
                 
-                <div className="flex items-center gap-8">
+                <div className="flex items-center gap-6 sm:gap-8">
                   <div className="flex flex-col items-end">
                     <div className="flex items-center text-[10px] font-bold text-emerald-600 dark:text-emerald-400 mb-0.5">
                       <ArrowDownLeft className="mr-0.5 h-3 w-3" />
-                      MASUK
+                      IN
                     </div>
                     <span className="text-sm font-bold tabular-nums">
                       {format(new Date(item.clockIn), "HH:mm")}
@@ -56,7 +67,7 @@ export function AttendanceHistory({ attendances }: HistoryProps) {
                   <div className="flex flex-col items-end">
                     <div className="flex items-center text-[10px] font-bold text-amber-600 dark:text-amber-400 mb-0.5">
                       <ArrowUpRight className="mr-0.5 h-3 w-3" />
-                      KELUAR
+                      OUT
                     </div>
                     <span className="text-sm font-bold tabular-nums">
                       {item.clockOut ? format(new Date(item.clockOut), "HH:mm") : "--:--"}

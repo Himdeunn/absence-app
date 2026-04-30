@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { startOfDay } from "date-fns"
 
-export async function clockIn(location?: { lat: number; lng: number }) {
+export async function clockIn(image?: string, location?: { lat: number; lng: number }) {
   const session = await auth()
   if (!session?.user) throw new Error("Unauthorized")
 
@@ -31,6 +31,7 @@ export async function clockIn(location?: { lat: number; lng: number }) {
       clockIn: now,
       locationLat: location?.lat,
       locationLong: location?.lng,
+      image,
     },
   })
 
