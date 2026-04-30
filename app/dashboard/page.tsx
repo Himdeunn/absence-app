@@ -30,7 +30,7 @@ export default async function DashboardPage() {
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Sesi Aktif</p>
             <div className="flex items-center gap-1.5">
               <ShieldCheck className="h-4 w-4 text-emerald-500" />
-              <p className="text-sm font-bold">{session?.user?.role === "ADMIN" ? "Administrator" : "Karyawan"}</p>
+              <p className="text-sm font-bold">{(session?.user as any)?.role === "ADMIN" ? "Administrator" : "Karyawan"}</p>
             </div>
           </div>
         </div>
