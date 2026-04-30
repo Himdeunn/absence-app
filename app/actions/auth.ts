@@ -12,8 +12,7 @@ export async function register(values: any) {
   }
 
   try {
-    // In production, use your real secret key from env
-    const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET_KEY || "1x0000000000000000000000000000000AA"
+    const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET_KEY || "0x4AAAAAADGhp74oIKwaVCUbTWDnlmL1Q_E"
     
     const verifyResponse = await fetch(
       "https://challenges.cloudflare.com/turnstile/v0/siteverify",
@@ -28,6 +27,7 @@ export async function register(values: any) {
 
     const verifyData = await verifyResponse.json()
     if (!verifyData.success) {
+      console.error("Turnstile verification failed:", verifyData)
       return { success: false, error: "Verifikasi keamanan gagal" }
     }
 
