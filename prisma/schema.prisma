@@ -18,6 +18,8 @@ model User {
   passwordHash  String
   role          Role         @default(USER)
   attendances   Attendance[]
+  loginAttempts Int          @default(0)
+  lockUntil     DateTime?
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 }
