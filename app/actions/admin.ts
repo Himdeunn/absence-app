@@ -50,6 +50,6 @@ export async function getAllAttendanceForExport() {
     date: att.date.toISOString(),
     clockIn: att.clockIn?.toISOString(),
     clockOut: att.clockOut?.toISOString(),
-    location: att.lat ? `${att.lat}, ${att.lng}` : "No Location"
+    location: att.locationLat ? `${att.locationLat}, ${att.locationLong}` : "No Location"
   }))
 }
