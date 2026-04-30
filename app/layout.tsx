@@ -38,14 +38,14 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://inkwell-absence.vercel.app"), // Placeholder URL
+  metadataBase: new URL("https://inkwell.himdeunn.my.id"),
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title: "InkWell — Kinetic Minimalism Attendance",
     description: "The future of attendance management. Accurate. Professional. Minimalist.",
-    url: "https://inkwell-absence.vercel.app",
+    url: "https://inkwell.himdeunn.my.id",
     siteName: "InkWell",
     images: [
       {

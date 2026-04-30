@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://inkwell-absence.vercel.app/sitemap.xml
+Sitemap: https://inkwell.himdeunn.my.id/sitemap.xml
