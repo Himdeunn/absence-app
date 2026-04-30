@@ -50,7 +50,7 @@ export function Navbar({ user }: NavbarProps) {
       <motion.nav 
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="w-full max-w-[1200px] h-20 bg-zinc-950 text-white rounded-full flex items-center justify-between px-2 md:px-3 shadow-2xl ring-1 ring-white/10 backdrop-blur-xl"
+        className="w-full max-w-[1200px] h-20 bg-zinc-950 text-white rounded-full flex items-center justify-between px-3 md:px-4 shadow-[0_20px_50px_rgba(0,0,0,0.3)] ring-1 ring-white/20 backdrop-blur-2xl"
       >
         {/* Left: Logo */}
         <Link href="/dashboard" className="flex items-center gap-3 p-1.5 hover:opacity-80 transition-opacity">

@@ -119,8 +119,8 @@ export default function Home() {
           {t('brand')} — Simple. Accurate. Minimal.
         </div>
         <div className="flex items-center gap-8 uppercase tracking-widest text-[10px]">
-          <a href="#" className="hover:text-primary transition-colors">{t('privacy')}</a>
-          <a href="#" className="hover:text-primary transition-colors">{t('terms')}</a>
+          <Link href="/privacy" className="hover:text-primary transition-colors">{t('privacy')}</Link>
+          <Link href="/terms" className="hover:text-primary transition-colors">{t('terms')}</Link>
           <a href="#" className="hover:text-primary transition-colors">© 2024 {t('brand')}</a>
         </div>
       </footer>

@@ -27,7 +27,7 @@ export default function ProfilePage() {
     setMessage(null)
 
     if (password && password !== confirmPass) {
-      setMessage({ type: 'error', text: "Password tidak cocok" })
+      setMessage({ type: 'error', text: t('errorPasswordMismatch') })
       setIsUpdating(false)
       return
     }
@@ -38,18 +38,18 @@ export default function ProfilePage() {
     })
 
     if (result.success) {
-      setMessage({ type: 'success', text: "Profil berhasil diperbarui" })
+      setMessage({ type: 'success', text: t('successUpdate') })
       setPassword("")
       setConfirmPass("")
       await update() // Refresh session
     } else {
-      setMessage({ type: 'error', text: result.error || "Terjadi kesalahan" })
+      setMessage({ type: 'error', text: result.error || t('errorUpdate') })
     }
     setIsUpdating(false)
   }
 
   const handleDelete = async () => {
-    if (confirm("Apakah Anda yakin ingin menghapus akun? Tindakan ini tidak dapat dibatalkan.")) {
+    if (confirm(t('confirmDelete'))) {
       const result = await deleteAccount()
       if (result.success) {
         signOut({ callbackUrl: "/" })
