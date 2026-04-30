@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, CheckCircle, XCircle, Loader2, Calendar } from "lucide-react"
 import { format } from "date-fns"
+import { id, enUS, zhCN, ja } from "date-fns/locale"
 import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/components/language-provider"
 import { useSession } from "next-auth/react"
@@ -11,10 +12,19 @@ import { useRouter } from "next/navigation"
 
 export default function AdminPage() {
   const { data: session, status } = useSession()
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   const router = useRouter()
   const [data, setData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
+
+  const locales = {
+    id: id,
+    en: enUS,
+    zh: zhCN,
+    jp: ja
+  }
+
+  const currentLocale = locales[language] || locales.en
 
   useEffect(() => {
     if (status === "unauthenticated" || (status === "authenticated" && (session?.user as any)?.role !== "ADMIN")) {
@@ -24,14 +34,8 @@ export default function AdminPage() {
 
   useEffect(() => {
     async function fetchData() {
-      // For simplicity, we'll fetch from a new action or just use server logic
-      // But since I'm converting to client, I'll assume we have a way to get this
-      // I'll create a server action for admin data
-      const response = await fetch('/api/admin/stats') // Or use a server action
-      // For now, I'll implement a server action and call it
+       // Implementation for data fetching will be in next steps
     }
-    // fetchData()
-    // Mocking for now to avoid breaking, but I should implement a real action
     setIsLoading(false)
   }, [])
 
@@ -48,13 +52,13 @@ export default function AdminPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-4xl font-black tracking-tight">{t('adminDashboard')}</h1>
-          <p className="text-muted-foreground font-medium uppercase tracking-[0.1em] text-[10px]">Ringkasan Aktivitas Seluruh Anggota</p>
+          <p className="text-muted-foreground font-medium uppercase tracking-[0.1em] text-[10px]">{t('adminSummary')}</p>
         </div>
         <div className="text-right p-4 bg-secondary/30 rounded-3xl border-2">
-          <p className="text-xs font-black text-primary uppercase tracking-[0.2em] mb-1">Status Real-time</p>
+          <p className="text-xs font-black text-primary uppercase tracking-[0.2em] mb-1">{t('realTimeStatus')}</p>
           <div className="flex items-center gap-2 text-muted-foreground font-bold text-sm">
              <Calendar className="h-4 w-4" />
-             {format(new Date(), "EEEE, d MMMM")}
+             {format(new Date(), "EEEE, d MMMM", { locale: currentLocale })}
           </div>
         </div>
       </div>
@@ -69,7 +73,7 @@ export default function AdminPage() {
           </CardHeader>
           <CardContent>
             <div className="text-4xl font-black tracking-tighter">--</div>
-            <p className="text-[10px] text-muted-foreground mt-2 font-bold uppercase tracking-widest">AKTIF DI SISTEM</p>
+            <p className="text-[10px] text-muted-foreground mt-2 font-bold uppercase tracking-widest">{t('activeInSystem')}</p>
           </CardContent>
         </Card>
         
@@ -82,7 +86,7 @@ export default function AdminPage() {
           </CardHeader>
           <CardContent>
             <div className="text-4xl font-black tracking-tighter">--</div>
-            <p className="text-[10px] text-muted-foreground mt-2 font-bold uppercase tracking-widest">SUDAH ABSEN</p>
+            <p className="text-[10px] text-muted-foreground mt-2 font-bold uppercase tracking-widest">{t('alreadyClockedIn')}</p>
           </CardContent>
         </Card>
 
@@ -95,7 +99,7 @@ export default function AdminPage() {
           </CardHeader>
           <CardContent>
             <div className="text-4xl font-black tracking-tighter">--</div>
-            <p className="text-[10px] text-muted-foreground mt-2 font-bold uppercase tracking-widest">BELUM ADA DATA</p>
+            <p className="text-[10px] text-muted-foreground mt-2 font-bold uppercase tracking-widest">{t('noDataYet')}</p>
           </CardContent>
         </Card>
       </div>
@@ -103,8 +107,8 @@ export default function AdminPage() {
       <Card className="border-2 shadow-2xl rounded-[3rem] overflow-hidden bg-card/50 backdrop-blur-sm">
         <CardHeader className="bg-secondary/20 border-b p-10 flex flex-row items-center justify-between">
           <div>
-            <CardTitle className="text-2xl font-bold tracking-tight">Log Kehadiran</CardTitle>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Data Hari Ini</p>
+            <CardTitle className="text-2xl font-bold tracking-tight">{t('attendanceLog')}</CardTitle>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{t('todayData')}</p>
           </div>
           <Button variant="outline" className="rounded-2xl border-2 font-bold text-xs h-12 px-6">
             {t('exportCsv')}
@@ -112,7 +116,7 @@ export default function AdminPage() {
         </CardHeader>
         <CardContent className="p-8">
             <div className="text-center py-20 text-muted-foreground font-bold italic">
-               Memuat data anggota...
+               {t('loadingMembers')}
             </div>
         </CardContent>
       </Card>

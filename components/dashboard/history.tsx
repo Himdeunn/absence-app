@@ -1,17 +1,31 @@
+"use client"
+
 import { format } from "date-fns"
-import { id } from "date-fns/locale"
+import { id, enUS, zhCN, ja } from "date-fns/locale"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowDownLeft, ArrowUpRight, Clock, User } from "lucide-react"
+import { useLanguage } from "@/components/language-provider"
 
 interface HistoryProps {
   attendances: any[]
 }
 
 export function AttendanceHistory({ attendances }: HistoryProps) {
+  const { t, language } = useLanguage()
+
+  const locales = {
+    id: id,
+    en: enUS,
+    zh: zhCN,
+    jp: ja
+  }
+
+  const currentLocale = locales[language] || locales.en
+
   return (
     <Card className="border-none shadow-xl ring-1 ring-black/5 dark:ring-white/10 overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between pb-2 bg-secondary/10">
-        <CardTitle className="text-lg font-bold">Riwayat Kehadiran</CardTitle>
+        <CardTitle className="text-lg font-bold">{t('history')}</CardTitle>
         <div className="p-2 bg-secondary rounded-lg">
           <Clock className="h-4 w-4 text-muted-foreground" />
         </div>
@@ -24,7 +38,7 @@ export function AttendanceHistory({ attendances }: HistoryProps) {
                 <Clock className="h-6 w-6 text-muted-foreground/50" />
               </div>
               <p className="text-sm font-medium text-muted-foreground">
-                Belum ada data absensi
+                {t('noData')}
               </p>
             </div>
           ) : (
@@ -45,10 +59,10 @@ export function AttendanceHistory({ attendances }: HistoryProps) {
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm font-bold text-foreground capitalize">
-                      {format(new Date(item.date), "EEEE", { locale: id })}
+                      {format(new Date(item.date), "EEEE", { locale: currentLocale })}
                     </span>
                     <span className="text-xs font-medium text-muted-foreground">
-                      {format(new Date(item.date), "d MMM yyyy", { locale: id })}
+                      {format(new Date(item.date), "d MMM yyyy", { locale: currentLocale })}
                     </span>
                   </div>
                 </div>

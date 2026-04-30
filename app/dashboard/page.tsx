@@ -55,7 +55,7 @@ export default function DashboardPage() {
             {t('welcomeBack')}
           </div>
           <h1 className="text-5xl font-black tracking-tighter">
-            {t('welcome')}, {session?.user?.name || "Rekan"}!
+            {t('welcome')}, {session?.user?.name || t('friend')}!
           </h1>
           <p className="text-muted-foreground font-bold text-sm uppercase tracking-widest">
             {todayAttendance?.clockIn ? t('attendanceRecorded') : t('notPresentYet')}

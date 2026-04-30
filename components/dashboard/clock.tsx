@@ -2,11 +2,22 @@
 
 import { useState, useEffect } from "react"
 import { format } from "date-fns"
-import { id } from "date-fns/locale"
+import { id, enUS, zhCN, ja } from "date-fns/locale"
 import { Clock } from "lucide-react"
+import { useLanguage } from "@/components/language-provider"
 
 export function RealTimeClock() {
   const [time, setTime] = useState<Date | null>(null)
+  const { language } = useLanguage()
+
+  const locales = {
+    id: id,
+    en: enUS,
+    zh: zhCN,
+    jp: ja
+  }
+
+  const currentLocale = locales[language] || locales.en
 
   useEffect(() => {
     setTime(new Date())
@@ -31,7 +42,7 @@ export function RealTimeClock() {
         </span>
       </div>
       <p className="text-sm font-black text-muted-foreground uppercase tracking-[0.4em]">
-        {format(time, "EEEE, d MMMM yyyy", { locale: id })}
+        {format(time, "EEEE, d MMMM yyyy", { locale: currentLocale })}
       </p>
     </div>
   )

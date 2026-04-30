@@ -12,7 +12,8 @@ import {
   User as UserIcon,
   Menu,
   X,
-  UserCircle
+  UserCircle,
+  ChevronRight
 } from "lucide-react"
 import { signOut } from "next-auth/react"
 import { useState, useEffect } from "react"
@@ -41,122 +42,151 @@ export function Navbar({ user }: NavbarProps) {
     ...(user?.role === "ADMIN" ? [{ label: t('admin'), href: "/admin", icon: Settings }] : []),
   ]
 
+  if (!mounted) return null
+
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
-      <div className="container mx-auto flex h-24 items-center justify-between px-6 lg:px-12">
-        <div className="flex items-center gap-16">
-          <Link href="/dashboard" className="flex items-center space-x-4 group">
+    <div className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 md:px-8">
+      {/* Floating Pill Navbar */}
+      <motion.nav 
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="w-full max-w-[1200px] h-20 bg-zinc-950 text-white rounded-full flex items-center justify-between px-2 md:px-3 shadow-2xl ring-1 ring-white/10 backdrop-blur-xl"
+      >
+        {/* Left: Logo */}
+        <Link href="/dashboard" className="flex items-center gap-3 p-1.5 hover:opacity-80 transition-opacity">
+          <div className="h-14 w-14 rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-white/20">
             <img 
               src="/logo.jpg" 
               alt="Logo" 
-              className="h-12 w-12 rounded-xl object-cover shadow-xl transition-transform group-hover:scale-105" 
+              className="h-full w-full object-cover" 
             />
-            <span className="text-3xl font-black tracking-tighter">{t('brand')}</span>
-          </Link>
-
-          <div className="hidden md:flex items-center space-x-2">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center px-6 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all",
-                  pathname === item.href
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                )}
-              >
-                <item.icon className="mr-3 h-4 w-4" />
-                {item.label}
-              </Link>
-            ))}
           </div>
-        </div>
+          <span className="hidden lg:block text-xl font-black tracking-tighter mr-4">{t('brand')}</span>
+        </Link>
 
-        <div className="flex items-center space-x-6">
-          <div className="hidden md:flex items-center space-x-6">
-            <LanguageSwitcher />
-            <div className="h-8 w-px bg-border mx-2" />
-            <Link href="/dashboard/profile" className="flex items-center space-x-4 px-6 py-2.5 bg-secondary/50 hover:bg-secondary rounded-2xl border-2 transition-all group">
-              <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary overflow-hidden shadow-inner">
-                <UserIcon className="h-5 w-5" />
-              </div>
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">{user?.name?.split(' ')[0] || "User"}</span>
+        {/* Center: Links (Desktop) */}
+        <div className="hidden md:flex items-center gap-2">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "px-6 py-2.5 text-[11px] font-black uppercase tracking-[0.2em] rounded-full transition-all duration-300 whitespace-nowrap",
+                pathname === item.href
+                  ? "bg-white text-black"
+                  : "text-zinc-400 hover:text-white hover:bg-white/10"
+              )}
+            >
+              {item.label}
             </Link>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => signOut()}
-              className="rounded-full h-12 w-12 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all border-2 border-transparent hover:border-destructive/20"
-            >
-              <LogOut className="h-5 w-5" />
-            </Button>
-          </div>
-
-          <div className="md:hidden flex items-center space-x-3">
-            <LanguageSwitcher />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full h-12 w-12 border-2"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </Button>
-          </div>
+          ))}
         </div>
-      </div>
 
+        {/* Right: User / Language / Menu */}
+        <div className="flex items-center gap-2">
+           <div className="hidden sm:flex items-center gap-2">
+              <LanguageSwitcher />
+              <div className="h-8 w-px bg-white/10 mx-1" />
+           </div>
+           
+           <div className="hidden lg:flex items-center">
+              <Link 
+                href="/dashboard/profile" 
+                className="flex items-center gap-3 bg-white text-black px-6 py-2.5 rounded-full hover:bg-zinc-200 transition-colors"
+              >
+                <span className="text-[11px] font-black uppercase tracking-widest">
+                   {user?.email}
+                </span>
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+           </div>
+
+           <Button
+             variant="ghost"
+             size="icon"
+             className="md:hidden h-14 w-14 rounded-full hover:bg-white/10 text-white"
+             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+           >
+             {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+           </Button>
+
+           <Button
+             variant="ghost"
+             size="icon"
+             onClick={() => signOut()}
+             className="hidden md:flex h-14 w-14 rounded-full hover:bg-white/10 text-zinc-400 hover:text-rose-500"
+           >
+             <LogOut className="h-5 w-5" />
+           </Button>
+        </div>
+      </motion.nav>
+
+      {/* Mobile Menu Overlay */}
       <AnimatePresence>
-        {isMobileMenuOpen && mounted && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="md:hidden border-b bg-background overflow-hidden"
-          >
-            <div className="flex flex-col p-8 space-y-4">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={cn(
-                    "flex items-center px-6 py-5 text-sm font-black uppercase tracking-[0.2em] rounded-[1.5rem] transition-all",
-                    pathname === item.href
-                      ? "bg-primary text-primary-foreground shadow-2xl shadow-primary/30"
-                      : "text-muted-foreground hover:bg-secondary"
-                  )}
-                >
-                  <item.icon className="mr-5 h-6 w-6" />
-                  {item.label}
-                </Link>
-              ))}
-              <hr className="my-6 opacity-50" />
-              <div className="flex items-center justify-between px-2">
-                <div className="flex items-center space-x-5">
-                  <div className="h-14 w-14 rounded-3xl bg-secondary flex items-center justify-center border-2 shadow-xl">
-                    <UserIcon className="h-7 w-7 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-base font-black uppercase tracking-widest leading-none mb-1.5">{user?.name || "User"}</p>
-                    <p className="text-xs text-muted-foreground font-bold">{user?.email}</p>
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full h-14 w-14 text-destructive hover:bg-destructive/10 border-2 border-transparent hover:border-destructive/20"
-                  onClick={() => signOut()}
-                >
-                  <LogOut className="h-7 w-7" />
-                </Button>
+        {isMobileMenuOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[55] md:hidden"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: -20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -20 }}
+              className="fixed top-32 left-4 right-4 bg-zinc-950 rounded-[2.5rem] p-10 z-[60] md:hidden shadow-2xl ring-1 ring-white/10 flex flex-col items-center gap-8"
+            >
+              <div className="flex flex-col items-center gap-6 w-full">
+                {navItems.map((item, idx) => (
+                  <motion.div
+                    key={item.href}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="w-full"
+                  >
+                    <Link
+                      href={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={cn(
+                        "block text-center text-2xl font-black uppercase tracking-[0.2em] transition-colors",
+                        pathname === item.href ? "text-white" : "text-zinc-500 hover:text-zinc-300"
+                      )}
+                    >
+                      {item.label}
+                    </Link>
+                  </motion.div>
+                ))}
               </div>
-            </div>
-          </motion.div>
+
+              <div className="w-full h-px bg-white/10" />
+
+              <div className="flex flex-col items-center gap-6 w-full">
+                <div className="flex items-center gap-6">
+                   <LanguageSwitcher />
+                   <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => signOut()}
+                    className="h-12 w-12 rounded-full border border-white/10 text-zinc-400"
+                  >
+                    <LogOut className="h-5 w-5" />
+                  </Button>
+                </div>
+                <Link 
+                  href="/dashboard/profile"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="bg-white text-black px-8 py-4 rounded-full font-black uppercase tracking-[0.2em] text-xs w-full text-center"
+                >
+                  {user?.email}
+                </Link>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
-    </nav>
+    </div>
   )
 }
