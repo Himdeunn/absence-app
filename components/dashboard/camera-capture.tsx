@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Camera, RefreshCw, Check, X, Loader2 } from "lucide-react"
 import { motion } from "framer-motion"
 
+import { useLanguage } from "@/components/language-provider"
+
 interface CameraCaptureProps {
   onCapture: (image: string) => void
   onCancel: () => void
@@ -14,6 +16,7 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [image, setImage] = useState<string | null>(null)
   const [isInitializing, setIsInitializing] = useState(true)
+  const { t } = useLanguage()
 
   const stopCamera = useCallback(() => {
     if (videoRef.current?.srcObject) {
@@ -54,7 +57,7 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
       const ctx = canvas.getContext("2d")
       if (ctx) {
         ctx.drawImage(video, 0, 0)
-        const dataUrl = canvas.toDataURL("image/jpeg", 0.6)
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.4)
         setImage(dataUrl)
         stopCamera()
       }
@@ -79,8 +82,8 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
       >
         <div className="p-6 border-b flex items-center justify-between">
           <div className="space-y-0.5">
-            <h3 className="font-bold text-lg">Selfie Verifikasi</h3>
-            <p className="text-xs text-muted-foreground font-medium">Ambil foto untuk absen masuk</p>
+            <h3 className="font-bold text-lg">{t('takeSelfie')}</h3>
+            <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">{t('status')}</p>
           </div>
           <Button variant="ghost" size="icon" onClick={onCancel} className="rounded-full">
             <X className="h-5 w-5" />
@@ -121,19 +124,19 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
                 <Button 
                   variant="secondary" 
                   size="lg" 
-                  className="rounded-2xl font-bold"
+                  className="rounded-2xl font-bold uppercase tracking-widest text-[10px]"
                   onClick={retake}
                 >
                   <RefreshCw className="mr-2 h-4 w-4" />
-                  Ulangi
+                  {t('retake')}
                 </Button>
                 <Button 
                   size="lg" 
-                  className="rounded-2xl bg-primary px-8 font-bold"
+                  className="rounded-2xl bg-primary px-8 font-bold uppercase tracking-widest text-[10px]"
                   onClick={() => onCapture(image)}
                 >
                   <Check className="mr-2 h-4 w-4" />
-                  Gunakan
+                  {t('usePhoto')}
                 </Button>
               </div>
             )}

@@ -54,85 +54,101 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4 relative overflow-hidden">
+      {/* Background Decorative Elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
+        <div className="absolute top-[10%] right-[10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-[10%] left-[10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-3xl" />
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        <div className="mb-8 text-center">
+        <div className="mb-10 text-center">
           <motion.div
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
-            className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg"
+            className="mx-auto mb-4"
           >
-            <UserPlus className="h-8 w-8" />
+            <img src="/logo.jpg" alt="Logo" className="h-20 w-20 rounded-3xl object-cover mx-auto shadow-2xl ring-4 ring-background" />
           </motion.div>
-          <h1 className="text-3xl font-bold tracking-tight">Daftar Akun</h1>
-          <p className="text-muted-foreground">Mulai gunakan Presence untuk absensi Anda</p>
+          <h1 className="text-4xl font-black tracking-tighter">Presence</h1>
+          <p className="text-muted-foreground font-medium uppercase tracking-[0.3em] text-[10px]">Create Account</p>
         </div>
 
-        <Card className="border-none shadow-xl ring-1 ring-black/5">
-          <CardHeader>
-            <CardTitle>Registrasi</CardTitle>
-            <CardDescription>
-              Lengkapi data berikut untuk membuat akun baru
+        <Card className="border-2 shadow-2xl rounded-[2rem] overflow-hidden bg-card/50 backdrop-blur-sm">
+          <CardHeader className="space-y-1 pb-8 text-center border-b bg-secondary/20">
+            <CardTitle className="text-2xl font-bold tracking-tight">Daftar Akun</CardTitle>
+            <CardDescription className="text-xs font-medium">
+              Lengkapi data berikut untuk bergabung
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <CardContent className="pt-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">Full Name</label>
                 <Input
                   placeholder="Nama Lengkap"
                   disabled={isLoading}
+                  className="h-12 rounded-xl border-2 focus:border-primary transition-all"
                   {...form.register("name")}
                 />
                 {form.formState.errors.name && (
-                  <p className="text-xs text-destructive font-medium">{form.formState.errors.name.message}</p>
+                  <p className="text-xs text-destructive font-bold ml-1">{form.formState.errors.name.message}</p>
                 )}
               </div>
               <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">Email Address</label>
                 <Input
                   type="email"
                   placeholder="name@example.com"
                   disabled={isLoading}
+                  className="h-12 rounded-xl border-2 focus:border-primary transition-all"
                   {...form.register("email")}
                 />
                 {form.formState.errors.email && (
-                  <p className="text-xs text-destructive font-medium">{form.formState.errors.email.message}</p>
+                  <p className="text-xs text-destructive font-bold ml-1">{form.formState.errors.email.message}</p>
                 )}
               </div>
               <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">Password</label>
                 <Input
                   type="password"
-                  placeholder="Password"
+                  placeholder="••••••••"
                   disabled={isLoading}
+                  className="h-12 rounded-xl border-2 focus:border-primary transition-all"
                   {...form.register("password")}
                 />
                 {form.formState.errors.password && (
-                  <p className="text-xs text-destructive font-medium">{form.formState.errors.password.message}</p>
+                  <p className="text-xs text-destructive font-bold ml-1">{form.formState.errors.password.message}</p>
                 )}
               </div>
               {error && (
-                <div className="rounded-xl bg-destructive/10 p-4 text-sm text-destructive font-medium">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="rounded-xl bg-destructive/10 border-2 border-destructive/20 p-4 text-xs text-destructive font-bold text-center"
+                >
                   {error}
-                </div>
+                </motion.div>
               )}
-              <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+              <Button type="submit" className="w-full h-14 rounded-xl font-bold text-base shadow-lg shadow-primary/20" disabled={isLoading}>
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Mendaftar...
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    REGISTERING...
                   </>
                 ) : (
-                  "Buat Akun"
+                  "BUAT AKUN BARU"
                 )}
               </Button>
             </form>
           </CardContent>
-          <CardFooter className="flex flex-col space-y-4 border-t pt-6">
-            <div className="text-center text-sm text-muted-foreground">
-              Sudah punya akun? <Link href="/auth/login" className="text-primary font-bold hover:underline">Masuk di sini</Link>
+          <CardFooter className="flex flex-col space-y-4 border-t py-6 bg-secondary/10">
+            <div className="text-center text-xs font-bold text-muted-foreground">
+              Sudah punya akun? <Link href="/auth/login" className="text-primary hover:underline">Masuk di sini</Link>
             </div>
           </CardFooter>
         </Card>

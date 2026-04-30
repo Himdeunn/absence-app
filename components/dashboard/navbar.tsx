@@ -11,11 +11,14 @@ import {
   LogOut, 
   User as UserIcon,
   Menu,
-  X
+  X,
+  UserCircle
 } from "lucide-react"
 import { signOut } from "next-auth/react"
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { LanguageSwitcher } from "@/components/language-switcher"
+import { useLanguage } from "@/components/language-provider"
 
 interface NavbarProps {
   user: any
@@ -24,22 +27,26 @@ interface NavbarProps {
 export function Navbar({ user }: NavbarProps) {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { t } = useLanguage()
 
   const navItems = [
-    { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { label: "Riwayat", href: "/dashboard/history", icon: History },
-    ...(user?.role === "ADMIN" ? [{ label: "Admin", href: "/admin", icon: Settings }] : []),
+    { label: t('dashboard'), href: "/dashboard", icon: LayoutDashboard },
+    { label: t('history'), href: "/dashboard/history", icon: History },
+    { label: t('profile'), href: "/dashboard/profile", icon: UserCircle },
+    ...(user?.role === "ADMIN" ? [{ label: t('admin'), href: "/admin", icon: Settings }] : []),
   ]
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <div className="flex items-center gap-8">
-          <Link href="/dashboard" className="flex items-center space-x-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
-              <span className="font-bold text-lg">P</span>
-            </div>
-            <span className="text-xl font-bold tracking-tight">Presence</span>
+      <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-8">
+        <div className="flex items-center gap-10">
+          <Link href="/dashboard" className="flex items-center space-x-3 group">
+            <img 
+              src="/logo.jpg" 
+              alt="Logo" 
+              className="h-10 w-10 rounded-xl object-cover shadow-lg transition-transform group-hover:scale-105" 
+            />
+            <span className="text-2xl font-bold tracking-tighter">Presence</span>
           </Link>
 
           <div className="hidden md:flex items-center space-x-1">
@@ -48,43 +55,50 @@ export function Navbar({ user }: NavbarProps) {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors",
+                  "flex items-center px-5 py-2.5 text-xs font-bold uppercase tracking-[0.15em] rounded-xl transition-all",
                   pathname === item.href
-                    ? "bg-secondary text-foreground"
-                    : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 )}
               >
-                <item.icon className="mr-2 h-4 w-4" />
+                <item.icon className="mr-2.5 h-4 w-4" />
                 {item.label}
               </Link>
             ))}
           </div>
         </div>
 
-        <div className="flex items-center space-x-4">
-          <div className="hidden md:flex items-center space-x-4">
-            <div className="flex items-center space-x-2 px-3 py-1 bg-secondary/50 rounded-full border">
-              <UserIcon className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">{user?.name || user?.email}</span>
-            </div>
+        <div className="flex items-center space-x-3">
+          <div className="hidden md:flex items-center space-x-3">
+            <LanguageSwitcher />
+            <div className="h-6 w-px bg-border mx-2" />
+            <Link href="/dashboard/profile" className="flex items-center space-x-3 px-4 py-2 bg-secondary/50 hover:bg-secondary rounded-2xl border transition-colors group">
+              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary overflow-hidden">
+                <UserIcon className="h-4 w-4" />
+              </div>
+              <span className="text-xs font-bold uppercase tracking-widest">{user?.name?.split(' ')[0] || "User"}</span>
+            </Link>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => signOut()}
-              className="rounded-full"
+              className="rounded-full h-11 w-11 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-5 w-5" />
             </Button>
           </div>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </Button>
+          <div className="md:hidden flex items-center space-x-2">
+            <LanguageSwitcher />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full h-11 w-11"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -94,42 +108,43 @@ export function Navbar({ user }: NavbarProps) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-b bg-background"
+            className="md:hidden border-b bg-background overflow-hidden"
           >
-            <div className="flex flex-col p-4 space-y-2">
+            <div className="flex flex-col p-6 space-y-3">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={cn(
-                    "flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors",
+                    "flex items-center px-5 py-4 text-sm font-bold uppercase tracking-[0.2em] rounded-[1.25rem] transition-all",
                     pathname === item.href
-                      ? "bg-primary text-primary-foreground"
+                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                       : "text-muted-foreground hover:bg-secondary"
                   )}
                 >
-                  <item.icon className="mr-3 h-5 w-5" />
+                  <item.icon className="mr-4 h-5 w-5" />
                   {item.label}
                 </Link>
               ))}
-              <hr className="my-2" />
-              <div className="flex items-center justify-between px-4 py-2">
-                <div className="flex items-center space-x-3">
-                  <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center">
-                    <UserIcon className="h-5 w-5" />
+              <hr className="my-4 opacity-50" />
+              <div className="flex items-center justify-between px-2">
+                <div className="flex items-center space-x-4">
+                  <div className="h-12 w-12 rounded-2xl bg-secondary flex items-center justify-center border shadow-inner">
+                    <UserIcon className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium leading-none">{user?.name || "User"}</p>
-                    <p className="text-xs text-muted-foreground">{user?.email}</p>
+                    <p className="text-sm font-bold uppercase tracking-widest leading-none mb-1">{user?.name || "User"}</p>
+                    <p className="text-xs text-muted-foreground font-medium">{user?.email}</p>
                   </div>
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
+                  className="rounded-full h-12 w-12 text-destructive hover:bg-destructive/10"
                   onClick={() => signOut()}
                 >
-                  <LogOut className="h-5 w-5" />
+                  <LogOut className="h-6 w-6" />
                 </Button>
               </div>
             </div>

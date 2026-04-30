@@ -3,10 +3,11 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { clockIn, clockOut } from "@/app/actions/attendance"
-import { MapPin, Loader2, LogIn, LogOut, CheckCircle2, Camera } from "lucide-react"
+import { MapPin, Loader2, LogOut, CheckCircle2, Camera } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { CameraCapture } from "./camera-capture"
+import { useLanguage } from "@/components/language-provider"
 
 interface AttendanceButtonProps {
   todayAttendance: any
@@ -16,6 +17,7 @@ export function AttendanceButton({ todayAttendance }: AttendanceButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showCamera, setShowCamera] = useState(false)
+  const { t } = useLanguage()
 
   const handleClockIn = async (capturedImage: string) => {
     setShowCamera(false)
@@ -96,14 +98,14 @@ export function AttendanceButton({ todayAttendance }: AttendanceButtonProps) {
                 <div className="bg-white/20 p-5 rounded-[2rem]">
                   <Camera className="h-12 w-12" />
                 </div>
-                <span className="tracking-tight">Clock In</span>
+                <span className="tracking-tight uppercase tracking-[0.1em]">{t('clockIn')}</span>
               </>
             ) : (
               <>
                 <div className="bg-white/20 p-5 rounded-[2rem]">
                   <LogOut className="h-12 w-12" />
                 </div>
-                <span className="tracking-tight">Clock Out</span>
+                <span className="tracking-tight uppercase tracking-[0.1em]">{t('clockOut')}</span>
               </>
             )}
           </Button>
@@ -113,19 +115,19 @@ export function AttendanceButton({ todayAttendance }: AttendanceButtonProps) {
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-sm font-medium text-destructive bg-destructive/10 px-4 py-2 rounded-xl border border-destructive/20"
+            className="text-sm font-bold text-destructive bg-destructive/10 px-6 py-3 rounded-2xl border-2 border-destructive/20"
           >
             {error}
           </motion.div>
         )}
 
-        <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-          <div className="flex items-center bg-secondary/50 px-3 py-1.5 rounded-full border">
-            <MapPin className="mr-1.5 h-3.5 w-3.5 text-primary" />
-            Verifikasi Aktif
+        <div className="flex items-center gap-3 text-xs font-bold text-muted-foreground">
+          <div className="flex items-center bg-secondary/50 px-4 py-2 rounded-full border shadow-sm">
+            <MapPin className="mr-2 h-3.5 w-3.5 text-primary" />
+            <span className="uppercase tracking-widest text-[10px]">{t('location')} OK</span>
           </div>
-          <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-          <span className="text-[10px] uppercase tracking-wider">Ready to record</span>
+          <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+          <span className="text-[10px] uppercase tracking-[0.2em]">{t('status')}</span>
         </div>
       </div>
 
