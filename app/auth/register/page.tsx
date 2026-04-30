@@ -28,6 +28,13 @@ const registerSchema = z.object({
 
 type RegisterFormValues = z.infer<typeof registerSchema>
 
+declare global {
+  interface Window {
+    turnstile: any;
+    onTurnstileSuccessRegister: (token: string) => void;
+  }
+}
+
 export default function RegisterPage() {
   const router = useRouter()
   const { t } = useLanguage()
@@ -37,6 +44,16 @@ export default function RegisterPage() {
 
   useEffect(() => {
     setMounted(true)
+    
+    // Define the callback on the window object
+    window.onTurnstileSuccessRegister = (token: string) => {
+      setTurnstileToken(token)
+    }
+
+    return () => {
+      // Clean up if necessary
+      delete (window as any).onTurnstileSuccessRegister
+    }
   }, [])
 
   const form = useForm<RegisterFormValues>({
@@ -90,7 +107,7 @@ export default function RegisterPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+        className="w-full max-md"
       >
         <div className="mb-10 text-center">
           <motion.div
@@ -155,33 +172,9 @@ export default function RegisterPage() {
               <div className="flex justify-center py-2">
                 <div 
                   className="cf-turnstile" 
-                  data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
+                  data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAADGhp4zXqfV-VE4p"}
                   data-callback="onTurnstileSuccessRegister"
                   data-theme="light"
-                />
-                <Script id="turnstile-callback-register">
-                  {`
-                    function onTurnstileSuccessRegister(token) {
-                      const event = new CustomEvent('turnstile-success-register', { detail: token });
-                      window.dispatchEvent(event);
-                    }
-                  `}
-                </Script>
-                <script dangerouslySetInnerHTML={{
-                  __html: `
-                    window.addEventListener('turnstile-success-register', (e) => {
-                      const input = document.getElementById('turnstile-token-input-register');
-                      if (input) {
-                        input.value = e.detail;
-                        input.dispatchEvent(new Event('input', { bubbles: true }));
-                      }
-                    });
-                  `
-                }} />
-                <input 
-                  type="hidden" 
-                  id="turnstile-token-input-register" 
-                  onChange={(e) => setTurnstileToken(e.target.value)} 
                 />
               </div>
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -26,6 +26,7 @@ type LoginFormValues = z.infer<typeof loginSchema>
 declare global {
   interface Window {
     turnstile: any;
+    onTurnstileSuccess: (token: string) => void;
   }
 }
 
@@ -35,10 +36,19 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
-  const turnstileRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setMounted(true)
+    
+    // Define the callback on the window object
+    window.onTurnstileSuccess = (token: string) => {
+      setTurnstileToken(token)
+    }
+
+    return () => {
+      // Clean up if necessary
+      delete (window as any).onTurnstileSuccess
+    }
   }, [])
 
   const form = useForm<LoginFormValues>({
@@ -61,13 +71,12 @@ export default function LoginPage() {
       const result = await signIn("credentials", {
         email: values.email,
         password: values.password,
-        turnstileToken, // Pass token if needed, though NextAuth authorize handles it separately usually
+        turnstileToken,
         redirect: false,
       })
 
       if (result?.error) {
         toast.error(result.error || "Email atau password salah")
-        // Reset turnstile on failure
         if (window.turnstile) window.turnstile.reset()
         setTurnstileToken(null)
       } else {
@@ -159,33 +168,9 @@ export default function LoginPage() {
               <div className="flex justify-center py-2">
                 <div 
                   className="cf-turnstile" 
-                  data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
+                  data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAADGhp4zXqfV-VE4p"}
                   data-callback="onTurnstileSuccess"
                   data-theme="light"
-                />
-                <Script id="turnstile-callback">
-                  {`
-                    function onTurnstileSuccess(token) {
-                      const event = new CustomEvent('turnstile-success', { detail: token });
-                      window.dispatchEvent(event);
-                    }
-                  `}
-                </Script>
-                <script dangerouslySetInnerHTML={{
-                  __html: `
-                    window.addEventListener('turnstile-success', (e) => {
-                      const input = document.getElementById('turnstile-token-input');
-                      if (input) {
-                        input.value = e.detail;
-                        input.dispatchEvent(new Event('input', { bubbles: true }));
-                      }
-                    });
-                  `
-                }} />
-                <input 
-                  type="hidden" 
-                  id="turnstile-token-input" 
-                  onChange={(e) => setTurnstileToken(e.target.value)} 
                 />
               </div>
 

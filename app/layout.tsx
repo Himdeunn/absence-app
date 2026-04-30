@@ -5,6 +5,7 @@ import { LanguageProvider } from "@/components/language-provider"
 import { SessionProvider } from "next-auth/react"
 import { Toaster } from "sonner"
 import { Preloader } from "@/components/preloader"
+import Script from "next/script"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -100,8 +101,10 @@ export default function RootLayout({
         <SessionProvider>
           <LanguageProvider>
             <Preloader />
-            <script
+            <Script
+              id="json-ld"
               type="application/ld+json"
+              strategy="afterInteractive"
               dangerouslySetInnerHTML={{
                 __html: JSON.stringify({
                   "@context": "https://schema.org",
