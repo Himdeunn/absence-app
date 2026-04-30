@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { CameraCapture } from "./camera-capture"
 import { useLanguage } from "@/components/language-provider"
+import { toast } from "sonner"
 
 interface AttendanceButtonProps {
   todayAttendance: any
@@ -15,7 +16,6 @@ interface AttendanceButtonProps {
 
 export function AttendanceButton({ todayAttendance }: AttendanceButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [showCamera, setShowCamera] = useState(false)
   const [mounted, setMounted] = useState(false)
   const { t } = useLanguage()
@@ -27,7 +27,6 @@ export function AttendanceButton({ todayAttendance }: AttendanceButtonProps) {
   const handleClockIn = async (capturedImage: string) => {
     setShowCamera(false)
     setIsLoading(true)
-    setError(null)
     try {
       let location = undefined
       if ("geolocation" in navigator) {
@@ -38,12 +37,14 @@ export function AttendanceButton({ todayAttendance }: AttendanceButtonProps) {
           location = { lat: pos.coords.latitude, lng: pos.coords.longitude }
         } catch (e) {
           console.warn("Location permission denied or timed out")
+          toast.warning("Lokasi tidak dapat diakses, tetap melanjutkan...")
         }
       }
       
       await clockIn(capturedImage, location)
+      toast.success(t('clockIn') + " berhasil!")
     } catch (err: any) {
-      setError(err.message)
+      toast.error(err.message || "Gagal absen masuk")
     } finally {
       setIsLoading(false)
     }
@@ -51,11 +52,11 @@ export function AttendanceButton({ todayAttendance }: AttendanceButtonProps) {
 
   const handleClockOut = async () => {
     setIsLoading(true)
-    setError(null)
     try {
       await clockOut()
+      toast.success(t('clockOut') + " berhasil!")
     } catch (err: any) {
-      setError(err.message)
+      toast.error(err.message || "Gagal absen keluar")
     } finally {
       setIsLoading(false)
     }
@@ -117,16 +118,6 @@ export function AttendanceButton({ todayAttendance }: AttendanceButtonProps) {
             )}
           </Button>
         </motion.div>
-
-        {error && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-xs font-black text-destructive bg-rose-50 px-6 py-4 rounded-2xl border-2 border-rose-100 uppercase tracking-widest text-center"
-          >
-            {error}
-          </motion.div>
-        )}
 
         <div className="flex items-center gap-4 text-xs font-black text-muted-foreground">
           <div className="flex items-center bg-card px-5 py-2.5 rounded-full border-2 shadow-sm">

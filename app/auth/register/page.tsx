@@ -13,6 +13,7 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import { register } from "@/app/actions/auth"
 import { useLanguage } from "@/components/language-provider"
+import { toast } from "sonner"
 
 const registerSchema = z.object({
   name: z.string().min(2, { message: "Nama minimal 2 karakter" }),
@@ -26,7 +27,6 @@ export default function RegisterPage() {
   const router = useRouter()
   const { t } = useLanguage()
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -44,17 +44,17 @@ export default function RegisterPage() {
 
   async function onSubmit(values: RegisterFormValues) {
     setIsLoading(true)
-    setError(null)
     
     try {
       const result = await register(values)
       if (result.success) {
+        toast.success("Pendaftaran berhasil! Silakan masuk.")
         router.push("/auth/login?registered=true")
       } else {
-        setError(result.error || "Gagal mendaftar")
+        toast.error(result.error || "Gagal mendaftar")
       }
     } catch (err) {
-      setError("Terjadi kesalahan")
+      toast.error("Terjadi kesalahan")
     } finally {
       setIsLoading(false)
     }
@@ -124,15 +124,6 @@ export default function RegisterPage() {
                   {...form.register("password")}
                 />
               </div>
-              {error && (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="rounded-2xl bg-rose-50 border-2 border-rose-100 p-4 text-[10px] text-rose-600 font-black uppercase tracking-widest text-center"
-                >
-                  {error}
-                </motion.div>
-              )}
               <Button type="submit" className="w-full h-16 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-primary/20" disabled={isLoading}>
                 {isLoading ? (
                   <>

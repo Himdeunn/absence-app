@@ -13,6 +13,7 @@ import { Loader2 } from "lucide-react"
 import { useLanguage } from "@/components/language-provider"
 import { motion } from "framer-motion"
 import Link from "next/link"
+import { toast } from "sonner"
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Email tidak valid" }),
@@ -25,7 +26,6 @@ export default function LoginPage() {
   const router = useRouter()
   const { t } = useLanguage()
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -42,7 +42,6 @@ export default function LoginPage() {
 
   async function onSubmit(values: LoginFormValues) {
     setIsLoading(true)
-    setError(null)
     
     try {
       const result = await signIn("credentials", {
@@ -52,13 +51,14 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        setError("Email atau password salah")
+        toast.error("Email atau password salah")
       } else {
+        toast.success(t('welcomeBack'))
         router.push("/dashboard")
         router.refresh()
       }
     } catch (err) {
-      setError("Terjadi kesalahan, silakan coba lagi")
+      toast.error("Terjadi kesalahan, silakan coba lagi")
     } finally {
       setIsLoading(false)
     }
@@ -124,15 +124,6 @@ export default function LoginPage() {
                   {...form.register("password")}
                 />
               </div>
-              {error && (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="rounded-2xl bg-rose-50 border-2 border-rose-100 p-4 text-[10px] text-rose-600 font-black uppercase tracking-widest text-center"
-                >
-                  {error}
-                </motion.div>
-              )}
               <Button type="submit" className="w-full h-16 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-primary/20" disabled={isLoading}>
                 {isLoading ? (
                   <>

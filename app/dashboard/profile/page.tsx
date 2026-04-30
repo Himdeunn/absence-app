@@ -3,19 +3,18 @@
 import { useSession } from "next-auth/react"
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { User, Mail, Shield, Loader2, CheckCircle2, AlertCircle, KeyRound } from "lucide-react"
+import { User, Mail, Shield, Loader2, KeyRound } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useLanguage } from "@/components/language-provider"
 import { updateProfile, deleteAccount } from "@/app/actions/user"
-import { motion, AnimatePresence } from "framer-motion"
 import { signOut } from "next-auth/react"
+import { toast } from "sonner"
 
 export default function ProfilePage() {
   const { data: session, update } = useSession()
   const { t } = useLanguage()
   const [isUpdating, setIsUpdating] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
   
   const [name, setName] = useState(session?.user?.name || "")
   const [password, setPassword] = useState("")
@@ -24,10 +23,9 @@ export default function ProfilePage() {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsUpdating(true)
-    setMessage(null)
 
     if (password && password !== confirmPass) {
-      setMessage({ type: 'error', text: t('errorPasswordMismatch') })
+      toast.error(t('errorPasswordMismatch'))
       setIsUpdating(false)
       return
     }
@@ -38,12 +36,12 @@ export default function ProfilePage() {
     })
 
     if (result.success) {
-      setMessage({ type: 'success', text: t('successUpdate') })
+      toast.success(t('successUpdate'))
       setPassword("")
       setConfirmPass("")
       await update() // Refresh session
     } else {
-      setMessage({ type: 'error', text: result.error || t('errorUpdate') })
+      toast.error(result.error || t('errorUpdate'))
     }
     setIsUpdating(false)
   }
@@ -52,9 +50,10 @@ export default function ProfilePage() {
     if (confirm(t('confirmDelete'))) {
       const result = await deleteAccount()
       if (result.success) {
+        toast.success("Akun berhasil dihapus")
         signOut({ callbackUrl: "/" })
       } else {
-        alert(result.error)
+        toast.error(result.error || "Gagal menghapus akun")
       }
     }
   }
@@ -160,23 +159,6 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <AnimatePresence>
-                  {message && (
-                    <motion.div 
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className={cn(
-                        "p-4 rounded-2xl flex items-center gap-3 text-xs font-bold border-2",
-                        message.type === 'success' ? "bg-emerald-50 border-emerald-100 text-emerald-600" : "bg-rose-50 border-rose-100 text-rose-600"
-                      )}
-                    >
-                      {message.type === 'success' ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
-                      {message.text}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
                 <Button 
                   type="submit" 
                   disabled={isUpdating}
@@ -191,8 +173,4 @@ export default function ProfilePage() {
       </div>
     </div>
   )
-}
-
-function cn(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
 }
