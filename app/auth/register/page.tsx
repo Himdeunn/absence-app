@@ -155,7 +155,7 @@ export default function RegisterPage() {
               <div className="flex justify-center py-2">
                 <div 
                   className="cf-turnstile" 
-                  data-sitekey="1x00000000000000000000AA"
+                  data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
                   data-callback="onTurnstileSuccessRegister"
                   data-theme="light"
                 />

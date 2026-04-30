@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ✒️ InkWell — Kinetic Minimalism Attendance System
 
-## Getting Started
+![InkWell Banner](https://inkwell.himdeunn.my.id/logo.jpg)
 
-First, run the development server:
+**InkWell** is a state-of-the-art, high-end attendance platform designed with a **Kinetic Minimalism** aesthetic. It redefines how organizations manage presence by combining cinematic typography, liquid transitions, and military-grade security.
 
+## ✨ Key Features
+
+- **🛡️ Military-Grade Security**: Integrated Cloudflare Turnstile CAPTCHA and automated account locking to prevent brute-force attacks.
+- **📸 Selfie Verification**: Real-time camera capture for authentic attendance logs.
+- **📍 Geolocation Tracking**: Precise location verification using high-accuracy GPS coordinates.
+- **🌍 Global i18n Support**: Full localization in **Indonesian, English, Chinese, and Japanese**.
+- **📊 Admin Insights**: Comprehensive dashboard with real-time analytics, member summaries, and functional CSV exports.
+- **📱 Ultra-Responsive**: "Floating Island" navigation system optimized for mobile, tablet, and desktop.
+- **🔔 Kinetic Notifications**: Real-time status updates using the `sonner` toast system.
+
+## 🚀 Tech Stack
+
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Database**: [PostgreSQL](https://www.postgresql.org/) (via [Prisma ORM](https://www.prisma.io/))
+- **Authentication**: [NextAuth.js](https://next-auth.js.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Security**: [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/)
+
+## 🛠️ Getting Started
+
+### 1. Clone the repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Himdeunn/absence-app.git
+cd absence-app
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install dependencies
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Environment Setup
+Create a `.env` file in the root directory and add the following:
+```env
+DATABASE_URL="your_postgresql_url"
+AUTH_SECRET="your_nextauth_secret"
+NEXT_PUBLIC_TURNSTILE_SITE_KEY="your_cloudflare_site_key"
+TURNSTILE_SECRET_KEY="your_cloudflare_secret_key"
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Database Sync
+```bash
+npx prisma db push
+```
 
-## Learn More
+### 5. Run Development Server
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 📄 License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Distributed under the MIT License. See `LICENSE` for more information.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built with precision by **InkWell Team**.
