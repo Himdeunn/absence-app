@@ -4,6 +4,7 @@ import "./globals.css";
 import { LanguageProvider } from "@/components/language-provider"
 import { SessionProvider } from "next-auth/react"
 import { Toaster } from "sonner"
+import { Preloader } from "@/components/preloader"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -98,6 +99,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-background text-foreground" suppressHydrationWarning>
         <SessionProvider>
           <LanguageProvider>
+            <Preloader />
             <script
               type="application/ld+json"
               dangerouslySetInnerHTML={{
