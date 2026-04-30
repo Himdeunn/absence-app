@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://inkwell-absence.vercel.app/sitemap.xml
