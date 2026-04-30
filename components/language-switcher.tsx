@@ -4,8 +4,9 @@ import { useState, useRef, useEffect } from "react"
 import { useLanguage } from "./language-provider"
 import { Language } from "@/lib/i18n"
 import { Button } from "@/components/ui/button"
-import { Languages, ChevronDown } from "lucide-react"
+import { Languages, ChevronDown, Check } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { cn } from "@/lib/utils"
 
 export function LanguageSwitcher() {
   const { language, setLanguage } = useLanguage()
@@ -30,47 +31,58 @@ export function LanguageSwitcher() {
   }, [])
 
   return (
-    <div className="relative" ref={menuRef}>
+    <div className="relative inline-block" ref={menuRef}>
       <Button 
         variant="ghost" 
         size="sm" 
-        className="rounded-full h-10 px-4 flex items-center gap-2 hover:bg-white/10 text-inherit transition-all"
+        className="rounded-full h-12 px-5 flex items-center gap-3 hover:bg-white/10 text-inherit transition-all border border-transparent hover:border-white/10"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <Languages className="h-4 w-4" />
-        <span className="text-[10px] font-black uppercase tracking-widest">{language}</span>
-        <ChevronDown className={`h-3 w-3 opacity-50 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+        <Languages className="h-4 w-4 opacity-70" />
+        <span className="text-[11px] font-black uppercase tracking-[0.2em]">{language}</span>
+        <ChevronDown className={cn("h-3 w-3 opacity-40 transition-transform duration-500", isOpen ? "rotate-180" : "")} />
       </Button>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            initial={{ opacity: 0, y: 15, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            className="absolute right-0 mt-4 w-56 bg-zinc-900 border border-white/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-2 z-[100] backdrop-blur-xl"
+            exit={{ opacity: 0, y: 15, scale: 0.95 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="absolute right-0 sm:right-0 md:right-0 mt-4 w-64 bg-zinc-950/90 border border-white/10 rounded-[2.5rem] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] p-3 z-[100] backdrop-blur-2xl origin-top-right"
           >
-            <div className="p-3 text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500 ml-2">Select Language</div>
-            {languages.map((lang) => (
-              <button
-                key={lang.code}
-                className={`w-full flex items-center justify-between px-5 py-3.5 rounded-2xl text-left transition-all group ${
-                  language === lang.code 
-                    ? 'bg-white text-black font-black' 
-                    : 'text-zinc-400 hover:bg-white/5 hover:text-white'
-                }`}
-                onClick={() => {
-                  setLanguage(lang.code)
-                  setIsOpen(false)
-                }}
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-lg">{lang.flag}</span>
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">{lang.label}</span>
-                </div>
-                {language === lang.code && <div className="h-1.5 w-1.5 rounded-full bg-black" />}
-              </button>
-            ))}
+            <div className="px-5 py-4 text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500 flex items-center gap-2">
+              <div className="h-1 w-1 rounded-full bg-primary" />
+              Select Language
+            </div>
+            <div className="grid gap-1">
+              {languages.map((lang) => (
+                <button
+                  key={lang.code}
+                  className={cn(
+                    "w-full flex items-center justify-between px-5 py-4 rounded-[1.5rem] text-left transition-all group relative overflow-hidden",
+                    language === lang.code 
+                      ? 'bg-white text-black font-black' 
+                      : 'text-zinc-400 hover:bg-white/5 hover:text-white'
+                  )}
+                  onClick={() => {
+                    setLanguage(lang.code)
+                    setIsOpen(false)
+                  }}
+                >
+                  <div className="flex items-center gap-4 relative z-10">
+                    <span className="text-xl filter drop-shadow-sm group-hover:scale-110 transition-transform">{lang.flag}</span>
+                    <span className="text-[11px] font-black uppercase tracking-[0.15em]">{lang.label}</span>
+                  </div>
+                  {language === lang.code && (
+                    <motion.div layoutId="active-lang-indicator">
+                      <Check className="h-4 w-4" />
+                    </motion.div>
+                  )}
+                </button>
+              ))}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
