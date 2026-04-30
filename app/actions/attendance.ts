@@ -98,3 +98,15 @@ export async function getRecentAttendance() {
     take: 7,
   })
 }
+
+export async function getAllAttendance() {
+  const session = await auth()
+  if (!session?.user) return []
+
+  const userId = (session.user as any).id
+
+  return await prisma.attendance.findMany({
+    where: { userId },
+    orderBy: { date: 'desc' },
+  })
+}
