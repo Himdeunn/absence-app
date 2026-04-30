@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { clockIn, clockOut } from "@/app/actions/attendance"
 import { MapPin, Loader2, LogOut, CheckCircle2, Camera } from "lucide-react"
@@ -17,7 +17,12 @@ export function AttendanceButton({ todayAttendance }: AttendanceButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showCamera, setShowCamera] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const { t } = useLanguage()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleClockIn = async (capturedImage: string) => {
     setShowCamera(false)
@@ -56,16 +61,18 @@ export function AttendanceButton({ todayAttendance }: AttendanceButtonProps) {
     }
   }
 
+  if (!mounted) return null
+
   if (todayAttendance?.clockIn && todayAttendance?.clockOut) {
     return (
-      <div className="flex flex-col items-center space-y-4 py-8">
-        <div className="flex h-28 w-28 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-950/30 text-emerald-600 shadow-inner">
-          <CheckCircle2 className="h-14 w-14" />
+      <div className="flex flex-col items-center space-y-6 py-10">
+        <div className="flex h-32 w-32 items-center justify-center rounded-[3rem] bg-emerald-100 text-emerald-600 shadow-2xl border-4 border-white dark:border-emerald-950/30">
+          <CheckCircle2 className="h-16 w-16" />
         </div>
-        <div className="text-center">
-          <h3 className="text-xl font-bold text-foreground">Selesai!</h3>
-          <p className="text-sm font-medium text-muted-foreground">
-            Anda telah menyelesaikan absensi hari ini.
+        <div className="text-center space-y-1">
+          <h3 className="text-2xl font-black tracking-tight uppercase">Selesai!</h3>
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
+            {t('attendanceRecorded')}
           </p>
         </div>
       </div>
@@ -74,7 +81,7 @@ export function AttendanceButton({ todayAttendance }: AttendanceButtonProps) {
 
   return (
     <>
-      <div className="flex flex-col items-center space-y-6 w-full max-w-sm mx-auto">
+      <div className="flex flex-col items-center space-y-8 w-full max-w-sm mx-auto">
         <motion.div
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -83,29 +90,29 @@ export function AttendanceButton({ todayAttendance }: AttendanceButtonProps) {
           <Button
             size="lg"
             className={cn(
-              "h-56 w-full rounded-[3.5rem] text-2xl font-bold flex flex-col gap-5 shadow-2xl transition-all duration-500",
+              "h-64 w-full rounded-[4rem] text-3xl font-black flex flex-col gap-6 shadow-2xl transition-all duration-500 border-8 border-white dark:border-background/50",
               !todayAttendance?.clockIn 
-                ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-emerald-500/30" 
+                ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-primary/30" 
                 : "bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/30"
             )}
             onClick={!todayAttendance?.clockIn ? () => setShowCamera(true) : handleClockOut}
             disabled={isLoading}
           >
             {isLoading ? (
-              <Loader2 className="h-14 w-14 animate-spin" />
+              <Loader2 className="h-20 w-20 animate-spin" />
             ) : !todayAttendance?.clockIn ? (
               <>
-                <div className="bg-white/20 p-5 rounded-[2rem]">
-                  <Camera className="h-12 w-12" />
+                <div className="bg-white/20 p-6 rounded-[2.5rem] shadow-inner">
+                  <Camera className="h-14 w-14" />
                 </div>
-                <span className="tracking-tight uppercase tracking-[0.1em]">{t('clockIn')}</span>
+                <span className="tracking-tighter uppercase">{t('clockIn')}</span>
               </>
             ) : (
               <>
-                <div className="bg-white/20 p-5 rounded-[2rem]">
-                  <LogOut className="h-12 w-12" />
+                <div className="bg-white/20 p-6 rounded-[2.5rem] shadow-inner">
+                  <LogOut className="h-14 w-14" />
                 </div>
-                <span className="tracking-tight uppercase tracking-[0.1em]">{t('clockOut')}</span>
+                <span className="tracking-tighter uppercase">{t('clockOut')}</span>
               </>
             )}
           </Button>
@@ -115,24 +122,24 @@ export function AttendanceButton({ todayAttendance }: AttendanceButtonProps) {
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-sm font-bold text-destructive bg-destructive/10 px-6 py-3 rounded-2xl border-2 border-destructive/20"
+            className="text-xs font-black text-destructive bg-rose-50 px-6 py-4 rounded-2xl border-2 border-rose-100 uppercase tracking-widest text-center"
           >
             {error}
           </motion.div>
         )}
 
-        <div className="flex items-center gap-3 text-xs font-bold text-muted-foreground">
-          <div className="flex items-center bg-secondary/50 px-4 py-2 rounded-full border shadow-sm">
-            <MapPin className="mr-2 h-3.5 w-3.5 text-primary" />
-            <span className="uppercase tracking-widest text-[10px]">{t('location')} OK</span>
+        <div className="flex items-center gap-4 text-xs font-black text-muted-foreground">
+          <div className="flex items-center bg-card px-5 py-2.5 rounded-full border-2 shadow-sm">
+            <MapPin className="mr-2 h-4 w-4 text-primary" />
+            <span className="uppercase tracking-[0.2em] text-[10px]">{t('activeVerification')}</span>
           </div>
           <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-          <span className="text-[10px] uppercase tracking-[0.2em]">{t('status')}</span>
+          <span className="text-[10px] uppercase tracking-[0.3em]">{t('readyToRecord')}</span>
         </div>
       </div>
 
       <AnimatePresence>
-        {showCamera && (
+        {showCamera && mounted && (
           <CameraCapture 
             onCapture={handleClockIn} 
             onCancel={() => setShowCamera(false)} 

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -8,10 +8,11 @@ import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Loader2, UserPlus } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { register } from "@/app/actions/auth"
+import { useLanguage } from "@/components/language-provider"
 
 const registerSchema = z.object({
   name: z.string().min(2, { message: "Nama minimal 2 karakter" }),
@@ -23,8 +24,14 @@ type RegisterFormValues = z.infer<typeof registerSchema>
 
 export default function RegisterPage() {
   const router = useRouter()
+  const { t } = useLanguage()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -53,9 +60,10 @@ export default function RegisterPage() {
     }
   }
 
+  if (!mounted) return null
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4 relative overflow-hidden">
-      {/* Background Decorative Elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
         <div className="absolute top-[10%] right-[10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-3xl" />
         <div className="absolute bottom-[10%] left-[10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-3xl" />
@@ -74,81 +82,72 @@ export default function RegisterPage() {
           >
             <img src="/logo.jpg" alt="Logo" className="h-20 w-20 rounded-3xl object-cover mx-auto shadow-2xl ring-4 ring-background" />
           </motion.div>
-          <h1 className="text-4xl font-black tracking-tighter">Presence</h1>
-          <p className="text-muted-foreground font-medium uppercase tracking-[0.3em] text-[10px]">Create Account</p>
+          <h1 className="text-4xl font-black tracking-tighter">{t('brand')}</h1>
+          <p className="text-muted-foreground font-black uppercase tracking-[0.3em] text-[10px]">Create Account</p>
         </div>
 
-        <Card className="border-2 shadow-2xl rounded-[2rem] overflow-hidden bg-card/50 backdrop-blur-sm">
+        <Card className="border-2 shadow-2xl rounded-[2.5rem] overflow-hidden bg-card/50 backdrop-blur-sm">
           <CardHeader className="space-y-1 pb-8 text-center border-b bg-secondary/20">
-            <CardTitle className="text-2xl font-bold tracking-tight">Daftar Akun</CardTitle>
-            <CardDescription className="text-xs font-medium">
-              Lengkapi data berikut untuk bergabung
+            <CardTitle className="text-2xl font-black tracking-tight uppercase">{t('createAccount')}</CardTitle>
+            <CardDescription className="text-[10px] font-bold uppercase tracking-widest">
+              {t('completeData')}
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-8">
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">Full Name</label>
+                <label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">{t('fullName')}</label>
                 <Input
-                  placeholder="Nama Lengkap"
+                  placeholder="John Doe"
                   disabled={isLoading}
-                  className="h-12 rounded-xl border-2 focus:border-primary transition-all"
+                  className="h-14 rounded-2xl border-2 focus:border-primary transition-all font-bold"
                   {...form.register("name")}
                 />
-                {form.formState.errors.name && (
-                  <p className="text-xs text-destructive font-bold ml-1">{form.formState.errors.name.message}</p>
-                )}
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">Email Address</label>
+                <label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">{t('emailAddress')}</label>
                 <Input
                   type="email"
                   placeholder="name@example.com"
                   disabled={isLoading}
-                  className="h-12 rounded-xl border-2 focus:border-primary transition-all"
+                  className="h-14 rounded-2xl border-2 focus:border-primary transition-all font-bold"
                   {...form.register("email")}
                 />
-                {form.formState.errors.email && (
-                  <p className="text-xs text-destructive font-bold ml-1">{form.formState.errors.email.message}</p>
-                )}
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">Password</label>
+                <label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">{t('newPassword')}</label>
                 <Input
                   type="password"
                   placeholder="••••••••"
                   disabled={isLoading}
-                  className="h-12 rounded-xl border-2 focus:border-primary transition-all"
+                  className="h-14 rounded-2xl border-2 focus:border-primary transition-all font-bold"
                   {...form.register("password")}
                 />
-                {form.formState.errors.password && (
-                  <p className="text-xs text-destructive font-bold ml-1">{form.formState.errors.password.message}</p>
-                )}
               </div>
               {error && (
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="rounded-xl bg-destructive/10 border-2 border-destructive/20 p-4 text-xs text-destructive font-bold text-center"
+                  className="rounded-2xl bg-rose-50 border-2 border-rose-100 p-4 text-[10px] text-rose-600 font-black uppercase tracking-widest text-center"
                 >
                   {error}
                 </motion.div>
               )}
-              <Button type="submit" className="w-full h-14 rounded-xl font-bold text-base shadow-lg shadow-primary/20" disabled={isLoading}>
+              <Button type="submit" className="w-full h-16 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-primary/20" disabled={isLoading}>
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    REGISTERING...
+                    {t('registering')}
                   </>
                 ) : (
-                  "BUAT AKUN BARU"
+                  t('register')
                 )}
               </Button>
             </form>
           </CardContent>
-          <CardFooter className="flex flex-col space-y-4 border-t py-6 bg-secondary/10">
-            <div className="text-center text-xs font-bold text-muted-foreground">
-              Sudah punya akun? <Link href="/auth/login" className="text-primary hover:underline">Masuk di sini</Link>
+          <CardFooter className="flex flex-col space-y-4 border-t py-8 bg-secondary/10">
+            <div className="text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+              {t('alreadyHaveAccount')} <Link href="/auth/login" className="text-primary hover:underline">{t('loginHere')}</Link>
             </div>
           </CardFooter>
         </Card>
